@@ -1,5 +1,10 @@
 #include "util.h"
 
+#include <errno.h>
+#include <limits.h>
+#include <stdbool.h>
+#include <stdlib.h>
+
 
 /* Removes the next line of input or all characters left on the stream,
  * whichever comes first. */
@@ -51,6 +56,93 @@ int getvalint(const char prompt[])
     clrstrm(stdin); 
 
     return input;
+}
+
+
+_Bool prsi(const char *instr, int *outi)
+{
+    errno = 0;
+    char *end;
+    long temp;
+    _Bool valid = true;
+    const int base = 0;     // let strtol auto-determine base
+
+    temp = strtol(instr, &end, base);
+
+    if (end == instr || end[0] != '\0' ||
+            (temp < INT_MIN  || temp > INT_MAX || errno == ERANGE))
+        valid = false;
+    else
+        *outi = (int) temp;
+
+    return valid;
+}
+
+
+
+_Bool prsl(const char *instr, long *outl)
+{
+    errno = 0;
+    char *end;
+    _Bool valid = true;
+    const int base = 0;     // let strtol auto-determine base
+
+    *outl = strtol(instr, &end, base);
+
+    if (end == instr || end[0] != '\0' ||
+            ((*outl == LONG_MIN || *outl == LONG_MAX) && errno == ERANGE))
+        valid = false;
+
+    return valid;
+}
+
+
+_Bool prsll(const char *instr, long long *outll)
+{
+    errno = 0;
+    char *end;
+    _Bool valid = true;
+    const int base = 0;     // let strtoll auto-determine base
+
+    *outll = strtoll(instr, &end, base);
+
+    if (end == instr || end[0] != '\0' ||
+            ((*outll == LLONG_MIN || *outll == LLONG_MAX) && errno == ERANGE))
+        valid = false;
+
+    return valid;
+}
+
+
+_Bool prsul(const char *instr, unsigned long *outul)
+{
+    errno = 0;
+    char *end;
+    _Bool valid = true;
+    const int base = 0;     // let strtoul auto-determine base
+
+    *outul = strtoul(instr, &end, base);
+
+    if (end == instr || end[0] != '\0' || (*outul == ULONG_MAX && errno == ERANGE))
+        valid = false;
+
+    return valid;
+}
+
+
+_Bool prsull(const char *instr, unsigned long long *outull)
+{
+    errno = 0;
+    char *end;
+    _Bool valid = true;
+    const int base = 0;     // let strtoull auto-determine base
+
+    *outull = strtoull(instr, &end, base);
+
+    if (end == instr || end[0] != '\0' || (*outull == ULLONG_MAX && errno == ERANGE))
+        valid = false;
+
+    return valid;
 }
 
 
