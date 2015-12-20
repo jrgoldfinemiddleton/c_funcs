@@ -6,7 +6,7 @@
 #include <stdlib.h>
 
 
-/* Removes the next line of input or all characters left on the stream,
+/* Removes the next line of input or all characters left on a stream,
  * whichever comes first. */
 void clrstrm(FILE *stream)
 {
@@ -15,131 +15,87 @@ void clrstrm(FILE *stream)
 }
 
 
-/* Prompts the user repeatedly for an integer within a range, and
- * returns a valid integer. */
-int getrangedint(int min, int max)
+/* Prompts the user until a valid int value is entered and returns it. */
+int geti()
 {
-    int i;
-    char buf[BUFSIZ];
+    return getir(INT_MIN, INT_MAX);
+}
+
+
+/* Prompts the user until a valid int value is entered in the
+ * range [min,max] and returns it. */
+int getir(int min, int max)
+{
+    return (int) getllr((long long) min, (long long) max);
+}
+
+
+/* Prompts the user until a valid long value is entered and returns it. */
+long getl()
+{
+    return getlr(LONG_MIN, LONG_MAX);
+}
+
+
+/* Prompts the user until a valid long value is entered in the
+ * range [min,max] and returns it. */
+long getlr(long min, long max)
+{
+    return (long) getllr((long long) min, (long long) max);
+}
+
+
+/* Prompts the user until a valid long long value is entered and returns it. */
+long long getll()
+{
+    return getllr(LLONG_MIN, LLONG_MAX);
+}
+
+
+/* Prompts the user until a valid long long value is entered in the
+ * range [min,max] and returns it. */
+long long getllr(long long min, long long max)
+{
+    char arr[BUFSIZ];       // copy of input
+    char prmt[BUFSIZ];      // prompt
+    long long out;          // value to return
+    _Bool done = false;     // success flag
 
     // set up prompt
-    snprintf(buf, sizeof buf, "Enter an integer between %i and %i:", min, max);
+    snprintf(prmt, sizeof prmt, "Enter an integer between %lli and %lli:",
+            min, max);
 
-    // repeatedly ask for a valid int in range
-    do
-        i = getvalint(buf);
-    while (i < min || i > max);
-
-    return i;
-}
-
-
-/* Prompts the user repeatedly for an integer and once it parses one from
- * the user's input, returns the integer.  */
-int getvalint(const char prompt[])
-{
-    int input;
-
-    puts(prompt);
-
-    // loop until an int is successfully parsed
-    while (scanf("%d", &input) != 1)
+    // prompt until a valid long long in range [min,max] is entered
+    while (!done)
     {
-        // clear leftover characters
-        clrstrm(stdin); 
-
-        printf("Invalid value.  ");
-        puts(prompt);
+        puts(prmt);
+        if (fgets(arr, sizeof arr, stdin) != NULL)
+            if (prsll(arr, &out) && (out >= min) && (out <= max))
+                done = true;
     }
 
-    // clear leftover characters
-    clrstrm(stdin); 
-
-    return input;
+    return out;
 }
 
 
-_Bool prsi(const char *instr, int *outi)
-{
-    errno = 0;
-    char *end;
-    long temp;
-    _Bool valid = true;
-    const int base = 0;     // let strtol auto-determine base
-
-    temp = strtol(instr, &end, base);
-
-    if (end == instr || end[0] != '\0' ||
-            (temp < INT_MIN  || temp > INT_MAX || errno == ERANGE))
-        valid = false;
-    else
-        *outi = (int) temp;
-
-    return valid;
-}
-
-
-
-_Bool prsl(const char *instr, long *outl)
-{
-    errno = 0;
-    char *end;
-    _Bool valid = true;
-    const int base = 0;     // let strtol auto-determine base
-
-    *outl = strtol(instr, &end, base);
-
-    if (end == instr || end[0] != '\0' ||
-            ((*outl == LONG_MIN || *outl == LONG_MAX) && errno == ERANGE))
-        valid = false;
-
-    return valid;
-}
-
-
+/* Attempts to parse a valid long long value from a string.  If the string
+ * contains any extra characters other than a trailing '\n' or if the
+ * parsed value is out of range, returns false.  Otherwise returns true
+ * and outll points to the valid value. */
 _Bool prsll(const char *instr, long long *outll)
 {
-    errno = 0;
-    char *end;
-    _Bool valid = true;
+    errno = 0;              // clear global error flag
+    char *end;              // either char after last interpreted char in
+                            // buffer or equal to instr if error
+    _Bool valid = true;     // success flag
     const int base = 0;     // let strtoll auto-determine base
 
+    // attempt to parse a valid value
     *outll = strtoll(instr, &end, base);
 
-    if (end == instr || end[0] != '\0' ||
+    // any of the following conditions indicate failure to parse valid value
+    if (end == instr || (*end != '\0' && *end != '\n') ||
             ((*outll == LLONG_MIN || *outll == LLONG_MAX) && errno == ERANGE))
-        valid = false;
-
-    return valid;
-}
-
-
-_Bool prsul(const char *instr, unsigned long *outul)
-{
-    errno = 0;
-    char *end;
-    _Bool valid = true;
-    const int base = 0;     // let strtoul auto-determine base
-
-    *outul = strtoul(instr, &end, base);
-
-    if (end == instr || end[0] != '\0' || (*outul == ULONG_MAX && errno == ERANGE))
-        valid = false;
-
-    return valid;
-}
-
-
-_Bool prsull(const char *instr, unsigned long long *outull)
-{
-    errno = 0;
-    char *end;
-    _Bool valid = true;
-    const int base = 0;     // let strtoull auto-determine base
-
-    *outull = strtoull(instr, &end, base);
-
-    if (end == instr || end[0] != '\0' || (*outull == ULLONG_MAX && errno == ERANGE))
         valid = false;
 
     return valid;
@@ -166,3 +122,24 @@ void readln(FILE *stream, char line[], const int sz)
     // terminate string with null character
     line[index - 1] = '\0';
 }
+
+
+/*
+// TEST DRIVER
+
+int main(void)
+{
+    int         i1,     i2;
+    long        l1,     l2;
+    long long   ll1,    ll2;
+
+    i1 = geti();
+    i2 = getir(0, 100);
+    l1 = getl();
+    l2 = getlr(-734235, 2342523523);
+    ll1 = getll();
+    ll2 = getllr(-10000000000, 10000000000);
+
+    return 0;
+}
+*/

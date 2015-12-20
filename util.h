@@ -5,22 +5,21 @@
 
 #include <stdio.h>
 
+/* Clears a line from the stream */
 void clrstrm(FILE *stream);
 
-int getrangedint(int min, int max);
+/* Prompt for integer types */
+int geti();
+int getir(int min, int max);
+long getl();
+long getlr(long min, long max);
+long long getll();
+long long getllr(long long min, long long max);
 
-int getvalint(const char prompt[]);
-
-_Bool prsi(const char *instr, int *outi);
-
-_Bool prsl(const char *instr, long *outl);
-
+/* Parses an integer from a string */
 _Bool prsll(const char *instr, long long *outll);
 
-_Bool prsul(const char *instr, unsigned long *outul);
-
-_Bool prsull(const char *instr, unsigned long long *outull);
-
+/* Stores a line of chars to a string */
 void readln(FILE *stream, char line[], int sz);
 
 #endif /* UTIL_H */
