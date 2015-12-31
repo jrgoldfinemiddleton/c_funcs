@@ -5,6 +5,14 @@
 
 #include <stdio.h>
 
+/* Modify or return value of a bit */
+void bitset(unsigned long long &num, const unsigned int pos);
+void bitclr(unsigned long long &num, const unsigned int pos);
+void bittgl(unsigned long long &num, const unsigned int pos);
+unsigned int bitchk(const unsigned long long &num, const unsigned int pos);
+void bitmod(unsigned long long &num, const unsigned int pos,
+        unsigned int newval);
+
 /* Clears a line from the stream */
 void clrstrm(FILE *stream);
 

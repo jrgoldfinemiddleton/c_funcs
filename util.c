@@ -6,6 +6,44 @@
 #include <stdlib.h>
 
 
+// Bit Ops Source: http://stackoverflow.com/questions/47981/how-do-you-set-clear-and-toggle-a-single-bit-in-c-c?rq=1
+
+/* Sets bit (from right) to value 1. */
+void bitset(unsigned long long &num, const unsigned int pos)
+{
+    num |= 1ULL << pos;
+}
+
+
+/* Sets bit (from right) to value 1. */
+void bitclr(unsigned long long &num, const unsigned int pos)
+{
+    num &= ~(1ULL << pos);
+}
+
+
+/* Switches the value of a bit (from right). */
+void bittgl(unsigned long long &num, const unsigned int pos)
+{
+    num ^= 1ULL << pos;
+}
+
+
+/* Returns the value of the bit at pos (from right). */
+unsigned int bitchk(const unsigned long long &num, const unsigned int pos)
+{
+    return ((num >> pos) & 1ULL);
+}
+
+
+/* Set the value of the bit at pos (from right) to newval. */
+void bitmod(unsigned long long &num, const unsigned int pos,
+        unsigned int newval)
+{
+    num ^= (-newval ^ num) & (1ULL << pos);
+}
+
+
 /* Removes the next line of input or all characters left on a stream,
  * whichever comes first. */
 void clrstrm(FILE *stream)
