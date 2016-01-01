@@ -36,7 +36,7 @@ unsigned int bitchk(const unsigned long long &num, const unsigned int pos)
 }
 
 
-/* Set the value of the bit at pos (from right) to newval. */
+/* Sets the value of the bit at pos (from right) to newval. */
 void bitmod(unsigned long long &num, const unsigned int pos,
         unsigned int newval)
 {
