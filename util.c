@@ -122,11 +122,12 @@ long long getllr(long long min, long long max)
  * and outll points to the valid value. */
 _Bool prsll(const char *instr, long long *outll)
 {
-    errno = 0;              // clear global error flag
     char *end;              // either char after last interpreted char in
                             // buffer or equal to instr if error
     _Bool valid = true;     // success flag
     const int base = 0;     // let strtoll auto-determine base
+
+    errno = 0;              // clear global error flag
 
     // attempt to parse a valid value
     *outll = strtoll(instr, &end, base);
